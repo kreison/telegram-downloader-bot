@@ -1,6 +1,4 @@
-import https from "https";
 import TelegramBot from "node-telegram-bot-api";
-import { downloadFile } from "./download";
 import axios from "axios";
 
 const FIX_ME_TOKEN = "6318669584:AAEpOyBDjyKYuF96W-X2HSjvPriQ3zJvAZY";
