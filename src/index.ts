@@ -46,9 +46,11 @@ bot.onText(/^\/download (https:\/\/.*$)/, async (msg, match) => {
                         { reply_to_message_id: msg.message_id }
                     );
                 } else if (data.data.hasOwnProperty("hdplay")) {
+                    const response = await axios.get(`https://tikwm.com${data.data.hdplay}`);                    
+                    
                     await bot.sendVideo(
                         chatId,
-                        `https://tikwm.com${data.data.hdplay}`,
+                        response.request.res.responseUrl,
                         { reply_to_message_id: msg.message_id }
                     );
                 }
