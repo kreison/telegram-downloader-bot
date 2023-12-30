@@ -2,7 +2,8 @@ import TelegramBot from "node-telegram-bot-api";
 import axios from "axios";
 import 'dotenv/config'
 
-const TOKEN = process.env.TELEGRAM_TOKEN!;
+const TOKEN = '6318669584:AAEpOyBDjyKYuF96W-X2HSjvPriQ3zJvAZY';
+console.log(TOKEN, 'TOKEN');
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 bot.setMyCommands([
