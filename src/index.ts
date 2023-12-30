@@ -16,11 +16,11 @@ bot.setMyCommands([
         description: 'Скачивание из тиктока'
     }
 ])
-bot.onText(/^\/start$/, (msg) => {
+bot.onText(/^\/start/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, "Скиньте ссылку и я скачаю видос");
 });
-bot.onText(/^\/download$/, (msg) => {
+bot.onText(/^\/download/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Отправьте ссылку в формате /download <ссылка>')
 })
 bot.onText(/^\/download (https:\/\/.*$)/, async (msg, match) => {
