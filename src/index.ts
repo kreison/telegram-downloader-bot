@@ -24,10 +24,10 @@ bot.onText(/^\/download/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Отправьте ссылку')
 })
 bot.onText(/(https:\/\/www\.tiktok\.com\/.*)|(https:\/\/vt\.tiktok\.com\/.*)/, async (msg, match) => {
-    const chatId = msg.chat.id;
+    const chatId = msg.chat.id;    
     var checkingMsg;
     try {
-        const link = match?.[1] ?? match?.[2];
+        const link = match?.[0] ?? match?.[1];
         checkingMsg = await bot.sendMessage(chatId, 'Проверяю...', {disable_notification: true})
         if (link) {
             const body = new FormData();
