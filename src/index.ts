@@ -20,13 +20,15 @@ bot.onText(/^\/start/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, "Скиньте ссылку и я скачаю видос");
 });
-bot.onText(/^\/download$/, (msg) => {
-    bot.sendMessage(msg.chat.id, 'Отправьте ссылку в формате /download <ссылка>')
+bot.onText(/^\/download/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Отправьте ссылку')
 })
-bot.onText(/^\/download (https:\/\/.*$)/, async (msg, match) => {
+bot.onText(/(https:\/\/www\.tiktok\.com\/.*)|(https:\/\/vt\.tiktok\.com\/.*)/, async (msg, match) => {
     const chatId = msg.chat.id;
+    var checkingMsg;
     try {
-        const link = match?.[1];
+        const link = match?.[1] ?? match?.[2];
+        checkingMsg = await bot.sendMessage(chatId, 'Проверяю...', {disable_notification: true})
         if (link) {
             const body = new FormData();
             body.set("url", link);
@@ -36,31 +38,38 @@ bot.onText(/^\/download (https:\/\/.*$)/, async (msg, match) => {
             body.set("hd", "1");
             const { data } = await axios.post("https://tikwm.com/api/", body);
             if (data.code === 0) {
+                await bot.editMessageText('Отправляю...', {chat_id: chatId, message_id: checkingMsg.message_id})
                 if (data.data.hasOwnProperty("images")) {
                     await bot.sendMediaGroup(
                         chatId,
-                        data.data.images.map((item: string) => ({
+                        data.data.images.map((item: string, i: number) => ({
                             media: item,
                             type: "photo",
-                        })),
-                        { reply_to_message_id: msg.message_id }
+                            caption: i === 0 ? msg.from?.username ? `@${msg.from?.username}` : msg.from?.first_name : undefined
+                        }))
                     );
+                    bot.deleteMessage(chatId, checkingMsg.message_id)
+                    bot.deleteMessage(chatId, msg.message_id)
                 } else if (data.data.hasOwnProperty("hdplay")) {
                     const response = await axios.get(`https://tikwm.com${data.data.hdplay}`);                    
-                    
                     await bot.sendVideo(
                         chatId,
                         response.request.res.responseUrl,
-                        { reply_to_message_id: msg.message_id }
+                        { 
+                            caption: msg.from?.username ? `@${msg.from?.username}` : msg.from?.first_name
+                        }
                     );
+                    bot.deleteMessage(chatId, checkingMsg.message_id);
+                    bot.deleteMessage(chatId, msg.message_id);
                 }
             } else {
-                await bot.sendMessage(chatId, data.msg);
+                await bot.editMessageText(data.msg, {chat_id: chatId, message_id: checkingMsg.message_id})
             }
         }
     } catch (error) {
         console.log(error);
-
+        if (checkingMsg?.message_id)
+            bot.deleteMessage(chatId, checkingMsg?.message_id)
         await bot.sendMessage(chatId, "Произошла ошибка");
     }
 });
