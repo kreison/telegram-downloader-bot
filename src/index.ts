@@ -27,7 +27,7 @@ bot.onText(/(https:\/\/www\.tiktok\.com\/.*)|(https:\/\/vt\.tiktok\.com\/.*)/, a
     const chatId = msg.chat.id;    
     var checkingMsg;
     try {
-        const link = match?.[0] ?? match?.[1];
+        const link = match?.[0] ?? match?.[1];        
         checkingMsg = await bot.sendMessage(chatId, 'Проверяю...', {disable_notification: true})
         if (link) {
             const body = new FormData();
@@ -50,8 +50,8 @@ bot.onText(/(https:\/\/www\.tiktok\.com\/.*)|(https:\/\/vt\.tiktok\.com\/.*)/, a
                     );
                     bot.deleteMessage(chatId, checkingMsg.message_id)
                     bot.deleteMessage(chatId, msg.message_id)
-                } else if (data.data.hasOwnProperty("hdplay")) {
-                    const response = await axios.get(`https://tikwm.com${data.data.hdplay}`);                    
+                } else if (data.data.hasOwnProperty("play")) {
+                    const response = await axios.get(`https://tikwm.com${data.data.play}`);  
                     await bot.sendVideo(
                         chatId,
                         response.request.res.responseUrl,
