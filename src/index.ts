@@ -1,8 +1,5 @@
 import axios, { AxiosError } from "axios";
 import 'dotenv/config'
-import parser from "html-metadata-parser";
-import chalk from "chalk";
-import { exit } from "process";
 import TelegramBot, { InlineQueryResult } from "node-telegram-bot-api";
 
 const headers = new Headers();
