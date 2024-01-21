@@ -8,9 +8,7 @@ const getRedirectUrl = async (url: any) => {
         const res = await fetch(url, {
             redirect: "follow",
             // follow: 10,
-        });
-        console.log(res.url, 'res.url');
-        
+        });        
         return res.url;
     }
     return url;
@@ -30,7 +28,6 @@ const getIdVideo = (url: string) => {
 export const getVideo = async (url: string, watermark: boolean) => {
     
     const parsedUrl = await getRedirectUrl(url)
-    console.log(JSON.stringify(parsedUrl), 'url');
     
     const idVideo = getIdVideo(parsedUrl)
     const API_URL = `https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?aweme_id=${idVideo}`;
@@ -50,6 +47,7 @@ export const getVideo = async (url: string, watermark: boolean) => {
     let urlResult = '';
     let imagesResult: string[] = []
     let musicUrlResult = '';
+    let coverResult = '';
     if (res.aweme_list[0].aweme_id != idVideo) {
         const body = new FormData();
         body.set("url", url);
@@ -97,13 +95,15 @@ export const getVideo = async (url: string, watermark: boolean) => {
         } else {
             // download_addr vs play_addr
             urlResult = (watermark) ? res.aweme_list[0].video.download_addr.url_list[0] : res.aweme_list[0].video.play_addr.url_list[0];
+            coverResult = res?.aweme_list?.[0]?.video?.cover?.url_list[0]
         }
     }
-    var data: {url: string, images: string[], id?: string, musicUrl: string} = {
+    var data: {url: string, images: string[], id?: string, musicUrl: string, cover?: string} = {
         url: urlResult,
         images: imagesResult,
         id: idVideo,
         musicUrl: musicUrlResult,
+        cover: coverResult,
     }
     console.log(data, 'jp');
     

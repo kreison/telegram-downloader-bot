@@ -11,10 +11,7 @@
         "module": "CommonJS",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "allowSyntheticDefaultImports": true,
-        "paths": {
-            "@/*": ["./src/*"]
-        }
+        "allowSyntheticDefaultImports": true
     },
     "include": ["**/*.ts", "**/*.tsx"],
     "exclude": ["node_modules"]
