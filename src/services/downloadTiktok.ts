@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { bot } from "..";
+import { bot } from "../bot";
 import { getVideo } from "../api/download";
 import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";

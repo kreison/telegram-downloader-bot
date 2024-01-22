@@ -1,21 +1,18 @@
-import 'dotenv/config'
-import TelegramBot from "node-telegram-bot-api";
-import { startRoutes } from './routes/routes';
+import bot from './bot';
+import express from 'express'
 
-const TOKEN = process.env.TELEGRAM_TOKEN!;
-console.log(process.env.TELEGRAM_TOKEN, 'TOKEN');
 
-export const bot = new TelegramBot(TOKEN, {
-    polling: true,
+const PORT = 8080;
+
+const app = express();
+app.use(express.json());
+
+app.post('/', (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
 });
-bot.setMyCommands([
-    {
-        command: '/start',
-        description: 'Запуск Бота'
-    },
-    {
-        command: '/download',
-        description: 'Скачивание из тиктока'
-    }
-])
-startRoutes();
+
+
+app.listen(PORT, async () => {
+    console.log(`Server is up and running on PORT ${PORT}`)
+})

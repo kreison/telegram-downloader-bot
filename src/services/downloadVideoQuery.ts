@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import { regexLinkTiktok } from "../routes/routes";
 import { getVideo } from "../api/download";
-import { bot } from "..";
+import { bot } from "../bot";
 
 export const downloadVideoQueryCommand = async (query: TelegramBot.InlineQuery) => {
     const match = query.query?.match(regexLinkTiktok)?.[0];

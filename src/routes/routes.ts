@@ -1,7 +1,7 @@
 import { startCommand } from "../services/start";
 import { downloadHelpCommand } from "../services/downloadHelp";
 import { downloadTiktokCommand } from "../services/downloadTiktok";
-import { bot } from "..";
+import { bot } from "../bot";
 import { downloadVideoQueryCommand } from "../services/downloadVideoQuery";
 
 
