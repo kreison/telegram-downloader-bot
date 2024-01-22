@@ -1,8 +1,11 @@
+import 'dotenv/config'
+
 import bot from './bot';
 import express from 'express'
 
 
-const PORT = 443;
+const PORT = process.env.PORT!;
+console.log(PORT);
 
 const app = express();
 app.use(express.json());
