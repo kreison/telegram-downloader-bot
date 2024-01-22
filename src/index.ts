@@ -14,5 +14,7 @@ app.post('/', (req, res) => {
 
 
 app.listen(PORT, async () => {
+    console.log(process.env.WEBHOOK_SERVER_URL);
+    
     console.log(`Server is up and running on PORT ${PORT}`)
 })
