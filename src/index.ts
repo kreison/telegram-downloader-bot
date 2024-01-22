@@ -12,6 +12,11 @@ app.post('/', (req, res) => {
     res.sendStatus(200);
 });
 
+app.get('/', (req, res) => {
+    console.log(req, res,);
+    res.sendStatus(200)
+})
+
 
 app.listen(PORT, async () => {
     console.log(process.env.WEBHOOK_SERVER_URL);
