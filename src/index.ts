@@ -2,7 +2,7 @@ import bot from './bot';
 import express from 'express'
 
 
-const PORT = 8080;
+const PORT = 443;
 
 const app = express();
 app.use(express.json());
