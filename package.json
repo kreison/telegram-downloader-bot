@@ -19,14 +19,14 @@
     "html-metadata-parser": "^2.0.4",
     "node-telegram-bot-api": "^0.64.0",
     "nodemon": "^3.0.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.2"
   },
   "need": {
-    "fluent-ffmpeg": "^2.1.2",
-    "@types/fluent-ffmpeg": "^2.1.24",
-    "@ffmpeg-installer/ffmpeg": "^1.1.0"
   }
 }

@@ -3,12 +3,13 @@ import { bot } from "../bot";
 import { getVideo } from "../api/download";
 import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
-// import ffmpeg from 'fluent-ffmpeg';
-// import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-// import fs from 'fs'
-// import https from 'https'
-// import {PassThrough} from 'stream';
-// ffmpeg.setFfmpegPath(ffmpegPath.path);
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+import fs from 'fs'
+import path from "path";
+import { filesPath } from "../paths";
+ffmpeg.setFfmpegPath(ffmpegPath.path);
+
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
     const chatId = msg.chat.id;    
@@ -50,37 +51,24 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                             }
                         }
                         if (data?.musicUrl){
-                                // const f = fs.createReadStream('./downloadTiktok.ts')
-                                // let readableAudio = new PassThrough();
-                                // https.get(data?.musicUrl, async (stream) => {                                    
-                                //     const command = ffmpeg()
-                                //         .input(stream)
-                                //         .output(readableAudio)
-                                //         .format('mp3')
-                                //         .run();
+                                if (data?.musicUrl.includes('.mp3')){
+                                    await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg?.[0].message_id});
+                                }else {
+                                    const audioPath = path.resolve(filesPath, 'output.mp3');
+                                    const write = fs.createWriteStream(audioPath)
+                                    ffmpeg().input(data?.musicUrl).format('mp3').pipe(write);
                                     
-                                //     await bot.sendAudio(
-                                //         chatId,
-                                //         readableAudio,
-                                //         {},
-                                //         {
-                                //             filename: 'customfilename',
-                                //             contentType: 'audio/mp3',
-                                //         })
-                                // });
-                                await bot.sendAudio(
-                                    chatId,
-                                    data?.musicUrl,
-                                    {
-                                        caption: 'Аудио',
-                                        reply_to_message_id: imgsMsg?.[0]?.message_id
-                                    }
-                                )
-                                
-                                
-                                
+                                    await new Promise((resolve) => {
+                                        write.on('finish', async () => {
+                                            console.log('readable');
+                                            const readable = fs.createReadStream(audioPath);
+                                            await bot.sendAudio(msg.chat.id, readable).catch((err) => console.error(err));
+                                            fs.rm(audioPath, (e) => null)
+                                            resolve(undefined)
+                                        })
+                                    })
+                                }
                         }
-                            
                     } else if (data?.url) {
                         await bot.sendVideo(
                             chatId,
@@ -98,7 +86,9 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
         }
         bot.deleteMessage(chatId, checkingMsg?.message_id || 0);
         await bot.sendMessage(chatId, `Скачано успешно!`);
-    } catch (error) {        
+    } catch (error) {     
+        console.log(error, 'error');
+           
         if (checkingMsg?.message_id)
             bot.deleteMessage(chatId, checkingMsg?.message_id)
         await bot.sendMessage(chatId, "Произошла ошибка");

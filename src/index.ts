@@ -3,7 +3,6 @@ import 'dotenv/config'
 import bot from './bot';
 import express from 'express'
 
-
 const PORT = process.env.PORT!;
 console.log(PORT);
 

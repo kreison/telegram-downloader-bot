@@ -5,6 +5,7 @@ import axios from 'axios';
 
 export const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, {
     webHook: true,
+    filepath: false,
 })
 bot.setWebHook(process.env.WEBHOOK_SERVER_URL!);
 bot.openWebHook()
