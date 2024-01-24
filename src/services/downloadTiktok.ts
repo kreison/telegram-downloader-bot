@@ -51,7 +51,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                             }
                         }
                         if (data?.musicUrl){
-                                if (data?.musicUrl.includes('.mp3')){
+                                if (true){
                                     await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg?.[0].message_id});
                                 }else {
                                     const audioPath = './output.mp3' ? './output.mp3' : path.resolve(filesPath, 'output.mp3');
