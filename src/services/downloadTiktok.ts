@@ -62,7 +62,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                         write.on('finish', async () => {
                                             console.log('readable');
                                             const readable = fs.createReadStream(audioPath);
-                                            await bot.sendAudio(msg.chat.id, readable).catch((err) => console.error(err));
+                                            await bot.sendAudio(msg.chat.id, readable, {}, {contentType: 'audio/mp3'}).catch((err) => console.error(err));
                                             fs.rm(audioPath, (e) => null)
                                             resolve(undefined)
                                         })
