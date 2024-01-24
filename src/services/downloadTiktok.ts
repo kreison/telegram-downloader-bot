@@ -3,6 +3,12 @@ import { bot } from "../bot";
 import { getVideo } from "../api/download";
 import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
+// import ffmpeg from 'fluent-ffmpeg';
+// import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+// import fs from 'fs'
+// import https from 'https'
+// import {PassThrough} from 'stream';
+// ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
     const chatId = msg.chat.id;    
@@ -43,15 +49,38 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                     })));
                             }
                         }
-                        if (data?.musicUrl)
-                            await bot.sendAudio(
-                                chatId,
-                                data?.musicUrl,
-                                {
-                                    caption: 'Аудио',
-                                    reply_to_message_id: imgsMsg?.[0]?.message_id
-                                }
-                            )
+                        if (data?.musicUrl){
+                                // const f = fs.createReadStream('./downloadTiktok.ts')
+                                // let readableAudio = new PassThrough();
+                                // https.get(data?.musicUrl, async (stream) => {                                    
+                                //     const command = ffmpeg()
+                                //         .input(stream)
+                                //         .output(readableAudio)
+                                //         .format('mp3')
+                                //         .run();
+                                    
+                                //     await bot.sendAudio(
+                                //         chatId,
+                                //         readableAudio,
+                                //         {},
+                                //         {
+                                //             filename: 'customfilename',
+                                //             contentType: 'audio/mp3',
+                                //         })
+                                // });
+                                await bot.sendAudio(
+                                    chatId,
+                                    data?.musicUrl,
+                                    {
+                                        caption: 'Аудио',
+                                        reply_to_message_id: imgsMsg?.[0]?.message_id
+                                    }
+                                )
+                                
+                                
+                                
+                        }
+                            
                     } else if (data?.url) {
                         await bot.sendVideo(
                             chatId,

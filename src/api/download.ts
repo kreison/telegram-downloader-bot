@@ -59,9 +59,10 @@ export const getVideo = async (url: string, watermark: boolean) => {
         if (res.code === 0) {
             if (res.data.hasOwnProperty("images")) {
                 imagesResult = res.data.images
-                musicUrlResult = res.data.music
-
-                return;
+                const location = await axios.get(`https://tikwm.com${res.data.music}`, {maxRedirects: 0}).catch((response: AxiosError) => {
+                    return response.response?.headers['location'];
+                });
+                musicUrlResult = location
             } else if (res.data.hasOwnProperty("play")) {
                 const location = await axios.get(`https://tikwm.com${res.data.play}`, {maxRedirects: 0}).catch((response: AxiosError) => {
                     
@@ -70,7 +71,7 @@ export const getVideo = async (url: string, watermark: boolean) => {
                 });
                 urlResult = location;
                 
-            }
+            }            
         } else {
             return ({
                 url: '',
