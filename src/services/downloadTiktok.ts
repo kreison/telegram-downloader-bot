@@ -9,7 +9,7 @@ import fs from 'fs'
 import path from "path";
 import { filesPath } from "../paths";
 ffmpeg.setFfmpegPath(ffmpegPath.path);
-
+import BufferStream from 'bufferstream'
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
     const chatId = msg.chat.id;    
@@ -27,7 +27,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                 
                 if (data !== null) {
                     if ((data?.images?.length ?? 0) > 0) {
-                        let imgsMsg
+                        let imgsMsg: {msg: any} = {msg}
                         if (data?.images){
                             const slicedArray = sliceArrays(data.images, 10)
                             const captionText = (index: number, i: number) => (
@@ -35,7 +35,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                             )
                             for (let sliceIndex = 0; sliceIndex < slicedArray.length; sliceIndex++) {
                                 const subArray = slicedArray[sliceIndex];
-                                imgsMsg = await bot.sendMediaGroup(
+                                imgsMsg.msg = await bot.sendMediaGroup(
                                     chatId,
                                     subArray.map((item: string, i: number) => ({
                                         media: item,
@@ -51,19 +51,32 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                             }
                         }
                         if (data?.musicUrl){
-                                if (true){
-                                    await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg?.[0].message_id});
+                                if (data?.musicUrl.includes('.mp3')){
+                                    await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg.msg?.[0].message_id});
                                 }else {
-                                    const audioPath = './output.mp3' ? './output.mp3' : path.resolve(filesPath, 'output.mp3');
-                                    const write = fs.createWriteStream(audioPath)
-                                    ffmpeg().input(data?.musicUrl).format('mp3').pipe(write);
+                                    const bufferStream = new BufferStream({encoding:'utf8', size:'flexible'});
                                     
-                                    await new Promise((resolve) => {
-                                        write.on('finish', async () => {
-                                            console.log('readable');
-                                            const readable = fs.createReadStream(audioPath);
-                                            await bot.sendAudio(msg.chat.id, readable, {}, {contentType: 'audio/mp3'}).catch((err) => console.error(err));
-                                            fs.rm(audioPath, (e) => null)
+                                    await new Promise((resolve, reject) => {
+                                        ffmpeg()
+                                        .input(data?.musicUrl)
+                                        .toFormat('mp3')
+                                        .pipe(bufferStream)
+                                        .on('end', async () => {
+                                            console.log('end');
+                                            const videoBuffer = bufferStream.buffer;
+                                            await bot.sendAudio(
+                                                msg.chat.id, 
+                                                videoBuffer, 
+                                                {
+                                                    reply_to_message_id: imgsMsg.msg?.[0].message_id
+                                                }, 
+                                                {
+                                                    filename: 'Музыка',
+                                                    contentType: 'audio/mp3'
+                                                })
+                                            .catch((err) => {
+                                                reject(err)
+                                            });
                                             resolve(undefined)
                                         })
                                     })
