@@ -8,7 +8,7 @@ import bot from './bot';
 import express from 'express'
 
 const PORT = process.env.PORT!;
-console.log(PORT);
+console.log(PORT, process.version);
 
 const app = express();
 app.use(express.json());
