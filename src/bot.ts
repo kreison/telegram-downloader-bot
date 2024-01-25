@@ -4,11 +4,11 @@ import { startRoutes } from './routes/routes';
 import axios from 'axios';
 
 export const bot = new TelegramBot(process.env.TELEGRAM_TOKEN!, {
-    webHook: true,
+    polling: true,
     filepath: false,
 })
-bot.setWebHook(process.env.WEBHOOK_SERVER_URL!);
-bot.openWebHook()
+// bot.setWebHook(process.env.WEBHOOK_SERVER_URL!);
+// bot.openWebHook()
 
 bot.setMyCommands([
     {
