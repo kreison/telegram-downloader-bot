@@ -4,11 +4,6 @@ import { getVideo } from "../api/download";
 import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
 import ffmpeg from 'fluent-ffmpeg';
-import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-import fs from 'fs'
-import path from "path";
-import { filesPath } from "../paths";
-ffmpeg.setFfmpegPath(ffmpegPath.path);
 import BufferStream from 'bufferstream'
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {

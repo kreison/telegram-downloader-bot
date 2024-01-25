@@ -1,4 +1,8 @@
 import 'dotenv/config'
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+ffmpeg.setFfmpegPath(ffmpegPath.path);
+console.log(ffmpegPath.path,'ffmpegPath.path)');
 
 import bot from './bot';
 import express from 'express'
