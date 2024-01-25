@@ -4,7 +4,7 @@ import { getVideo } from "../api/download";
 import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
 import ffmpeg from 'fluent-ffmpeg';
-import BufferStream from 'bufferstream'
+import Stream from 'stream'
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
     const chatId = msg.chat.id;    
@@ -49,35 +49,41 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                 if (data?.musicUrl.includes('.mp3')){
                                     await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg.msg?.[0].message_id});
                                 }else {
-                                    const bufferStream = new BufferStream({encoding:'utf8', size:'flexible'});
-                                    
-                                    await new Promise((resolve, reject) => {
-                                        ffmpeg({timeout: 20, logger: {
-                                            error(...data) {
-                                                console.log(data, 'error');
-                                                
-                                            },
-                                            info(...data) {
-                                                console.log(data, 'info');
+                                    // const bufferStream = new BufferStream({encoding:'utf8', size:'flexible'});
+                                    const output = new Stream.PassThrough();
+                                    ffmpeg({timeout: 20, logger: {
+                                        error(...data) {
+                                            console.log(data, 'error');
                                             
-                                            },
-                                            warn(...data) {
-                                                console.log(data, 'warn');
-                                                
-                                            },
-                                            debug(...data) {
+                                        },
+                                        info(...data) {
+                                            console.log(data, 'info');
+                                            
+                                        },
+                                        warn(...data) {
+                                            console.log(data, 'warn');
+                                            
+                                        },
+                                        debug(...data) {
                                                 console.log(data, 'debug');
                                                 
                                             },
                                         }})
                                         .input(data?.musicUrl)
                                         .toFormat('mp3')
-                                        .pipe(bufferStream, {end: true})
-                                        .on('end', async () => {
+                                        .writeToStream(output, {end: true})
+                                        
+                                    await new Promise((resolve, reject) => {
+                                        const buffers: any = [];
+                                        output.on('data', function (buf) {
+                                            buffers.push(buf);
+                                        });
+                                        output.on('end', async () => {                                        
+                                            const bufferStream = Buffer.concat(buffers);
                                             console.log('end', bufferStream);
                                             await bot.sendAudio(
                                                 msg.chat.id, 
-                                                bufferStream.buffer, 
+                                                bufferStream, 
                                                 {
                                                     reply_to_message_id: imgsMsg.msg?.[0].message_id
                                                 }, 
