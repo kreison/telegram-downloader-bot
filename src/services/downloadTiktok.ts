@@ -50,28 +50,11 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                     await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg.msg?.[0].message_id});
                                 }else {
                                     const output = new Stream.PassThrough();
-                                    ffmpeg({timeout: 20, logger: {
-                                        error(...data) {
-                                            console.log(data, 'error');
-                                            
-                                        },
-                                        info(...data) {
-                                            console.log(data, 'info');
-                                            
-                                        },
-                                        warn(...data) {
-                                            console.log(data, 'warn');
-                                            
-                                        },
-                                        debug(...data) {
-                                                console.log(data, 'debug');
-                                                
-                                            },
-                                        }})
+                                    ffmpeg({timeout: 20, })
                                         .input(data?.musicUrl)
                                         .toFormat('mp3')
                                         .writeToStream(output, {end: true})
-                                        
+                                    
                                     await new Promise((resolve, reject) => {
                                         const buffers: any = [];
                                         output.on('data', function (buf) {
