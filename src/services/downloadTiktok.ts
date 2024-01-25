@@ -52,7 +52,24 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                     const bufferStream = new BufferStream({encoding:'utf8', size:'flexible'});
                                     
                                     await new Promise((resolve, reject) => {
-                                        ffmpeg({timeout: 20})
+                                        ffmpeg({timeout: 20, logger: {
+                                            error(...data) {
+                                                console.log(data, 'error');
+                                                
+                                            },
+                                            info(...data) {
+                                                console.log(data, 'info');
+                                            
+                                            },
+                                            warn(...data) {
+                                                console.log(data, 'warn');
+                                                
+                                            },
+                                            debug(...data) {
+                                                console.log(data, 'debug');
+                                                
+                                            },
+                                        }})
                                         .input(data?.musicUrl)
                                         .toFormat('mp3')
                                         .pipe(bufferStream, {end: true})
