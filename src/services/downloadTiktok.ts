@@ -49,7 +49,6 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                 if (data?.musicUrl.includes('.mp3')){
                                     await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg.msg?.[0].message_id});
                                 }else {
-                                    // const bufferStream = new BufferStream({encoding:'utf8', size:'flexible'});
                                     const output = new Stream.PassThrough();
                                     ffmpeg({timeout: 20, logger: {
                                         error(...data) {
