@@ -1,11 +1,15 @@
 import 'dotenv/config'
 import ffmpeg from 'fluent-ffmpeg';
+import {execSync} from 'node:child_process';
 if (process.env.NODE_ENV !== 'production') {
     const ffmpegPath = require('@ffmpeg-installer/ffmpeg');
     ffmpeg.setFfmpegPath(ffmpegPath.path);
     console.log(ffmpegPath.path,'ffmpegPath.path)');
+    console.log(execSync("which ffmpeg", { encoding: "utf-8" }).trim());
 }else {
-    ffmpeg.setFfmpegPath('/bin/ffmpeg');
+    console.log(execSync("which ffmpeg", { encoding: "utf-8" }).trim());
+    
+    ffmpeg.setFfmpegPath(execSync("which ffmpeg", { encoding: "utf-8" }));
 
 }
 
