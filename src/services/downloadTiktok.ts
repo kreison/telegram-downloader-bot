@@ -55,7 +55,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                         ffmpeg({timeout: 20})
                                         .input(data?.musicUrl)
                                         .toFormat('mp3')
-                                        .pipe(bufferStream)
+                                        .pipe(bufferStream, {end: true})
                                         .on('end', async () => {
                                             console.log('end', bufferStream);
                                             await bot.sendAudio(
