@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
     ffmpeg.setFfmpegPath(ffmpegPath.path);
     console.log(ffmpegPath.path,'ffmpegPath.path)');
 }else {
-    ffmpeg.setFfmpegPath('/bin/ffmpeg/');
+    ffmpeg.setFfmpegPath('/bin/ffmpeg');
 
 }
 
