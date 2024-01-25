@@ -48,6 +48,7 @@ export const getVideo = async (url: string, watermark: boolean) => {
     let imagesResult: string[] = []
     let musicUrlResult = '';
     let coverResult = '';
+    let data_size = 0;
     if (res.aweme_list[0].aweme_id != idVideo) {
         const body = new FormData();
         body.set("url", url);
@@ -70,14 +71,15 @@ export const getVideo = async (url: string, watermark: boolean) => {
                     return response.response?.headers['location'];
                 });
                 urlResult = location;
-                
+                data_size = res.data?.size || 0
             }            
         } else {
             return ({
                 url: '',
                 images: [],
                 id: idVideo,
-                musicUrl: ''
+                musicUrl: '',
+                data_size,
             })
         }
     }else {
@@ -97,14 +99,16 @@ export const getVideo = async (url: string, watermark: boolean) => {
             // download_addr vs play_addr
             urlResult = (watermark) ? res.aweme_list[0].video.download_addr.url_list[0] : res.aweme_list[0].video.play_addr.url_list[0];
             coverResult = res?.aweme_list?.[0]?.video?.cover?.url_list[0]
+            data_size = res?.aweme_list?.[0].video.download_addr.data_size
         }
     }
-    var data: {url: string, images: string[], id?: string, musicUrl: string, cover?: string} = {
+    var data: {url: string, images: string[], id?: string, musicUrl: string, cover?: string, data_size: number} = {
         url: urlResult,
         images: imagesResult,
         id: idVideo,
         musicUrl: musicUrlResult,
         cover: coverResult,
+        data_size,
     }
     console.log(data, 'jp');
     

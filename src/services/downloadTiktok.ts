@@ -5,6 +5,8 @@ import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
 import ffmpeg from 'fluent-ffmpeg';
 import Stream from 'stream'
+import { ffmpegToBuffer } from "../utils/ffmpegToBuffer";
+import axios from "axios";
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
     const chatId = msg.chat.id;    
@@ -49,46 +51,38 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                 if (data?.musicUrl.includes('.mp3')){
                                     await bot.sendAudio(msg.chat.id, data?.musicUrl, {reply_to_message_id: imgsMsg.msg?.[0].message_id});
                                 }else {
-                                    const output = new Stream.PassThrough();
-                                    ffmpeg({timeout: 20, })
+                                    const bufferStream = await ffmpegToBuffer(ffmpeg({timeout: 20, })
                                         .input(data?.musicUrl)
-                                        .toFormat('mp3')
-                                        .writeToStream(output, {end: true})
-                                    
-                                    await new Promise((resolve, reject) => {
-                                        const buffers: any = [];
-                                        output.on('data', function (buf) {
-                                            buffers.push(buf);
-                                        });
-                                        output.on('end', async () => {                                        
-                                            const bufferStream = Buffer.concat(buffers);
-                                            console.log('end', bufferStream);
-                                            await bot.sendAudio(
-                                                msg.chat.id, 
-                                                bufferStream, 
-                                                {
-                                                    reply_to_message_id: imgsMsg.msg?.[0].message_id
-                                                }, 
-                                                {
-                                                    filename: 'Музыка',
-                                                    contentType: 'audio/mp3'
-                                                })
-                                            .catch((err) => {
-                                                reject(err)
-                                            });
-                                            resolve(undefined)
+                                        .toFormat('mp3'))
+                                    await bot.sendAudio(
+                                        msg.chat.id, 
+                                        bufferStream, 
+                                        {
+                                            reply_to_message_id: imgsMsg.msg?.[0].message_id
+                                        }, 
+                                        {
+                                            filename: 'Музыка',
+                                            contentType: 'audio/mp3'
                                         })
-                                    })
                                 }
                         }
                     } else if (data?.url) {
-                        await bot.sendVideo(
-                            chatId,
-                            data.url,
-                            { 
-                                caption: msg.from?.username ? `@${msg.from?.username} ${index+1} из ${matchArray.length}` : msg.from?.first_name + ` ${index+1} из ${matchArray.length}`
-                            }
-                        );
+                        if (data.data_size < 52428800){
+                            await bot.sendVideo(
+                                chatId,
+                                data.url,
+                                { 
+                                    caption: msg.from?.username ? `@${msg.from?.username} ${index+1} из ${matchArray.length}` : msg.from?.first_name + ` ${index+1} из ${matchArray.length}`
+                                }
+                            );
+                        }else {
+                            const shortedUrl = await axios.get(`https://ulvis.net/api.php?url=${data?.url}`)
+                            await bot.sendMessage(
+                                chatId,
+                                `Ошибка! Файл слишком большой, для промотра перейдите по ссылке - ${shortedUrl?.data}`
+                            )
+                        }
+                        
                     }
                 } else {
                 }
