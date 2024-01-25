@@ -57,11 +57,10 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                         .toFormat('mp3')
                                         .pipe(bufferStream)
                                         .on('end', async () => {
-                                            console.log('end');
-                                            const videoBuffer = bufferStream.buffer;
+                                            console.log('end', bufferStream);
                                             await bot.sendAudio(
                                                 msg.chat.id, 
-                                                videoBuffer, 
+                                                bufferStream.buffer, 
                                                 {
                                                     reply_to_message_id: imgsMsg.msg?.[0].message_id
                                                 }, 
