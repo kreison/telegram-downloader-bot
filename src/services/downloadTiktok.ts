@@ -4,9 +4,7 @@ import { getVideo } from "../api/download";
 import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
 import ffmpeg from 'fluent-ffmpeg';
-import Stream from 'stream'
 import { ffmpegToBuffer } from "../utils/ffmpegToBuffer";
-import axios from "axios";
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
     const chatId = msg.chat.id;    
@@ -67,21 +65,13 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message ) {
                                 }
                         }
                     } else if (data?.url) {
-                        if (data.data_size < 52428800){
-                            await bot.sendVideo(
-                                chatId,
-                                data.url,
-                                { 
-                                    caption: msg.from?.username ? `@${msg.from?.username} ${index+1} из ${matchArray.length}` : msg.from?.first_name + ` ${index+1} из ${matchArray.length}`
-                                }
-                            );
-                        }else {
-                            const shortedUrl = await axios.get(`https://ulvis.net/api.php?url=${data?.url}`)
-                            await bot.sendMessage(
-                                chatId,
-                                `Ошибка! Файл слишком большой, для промотра перейдите по ссылке - ${shortedUrl?.data}`
-                            )
-                        }
+                        await bot.sendVideo(
+                            chatId,
+                            data.url,
+                            { 
+                                caption: msg.from?.username ? `@${msg.from?.username} ${index+1} из ${matchArray.length}` : msg.from?.first_name + ` ${index+1} из ${matchArray.length}`
+                            }
+                        );
                         
                     }
                 } else {
