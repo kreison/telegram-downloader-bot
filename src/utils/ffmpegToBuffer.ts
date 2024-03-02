@@ -15,9 +15,7 @@ export const ffmpegToBuffer = async (ffmpeg: Ffmpeg.FfmpegCommand) => {
                 buffers.push(buf);
             });
             output.on('end', async () => {                                        
-                const bufferStream = Buffer.concat(buffers);
-                console.log('end', bufferStream);
-                
+                const bufferStream = Buffer.concat(buffers);                
                 resolve(bufferStream)
             })
         } catch (err) {

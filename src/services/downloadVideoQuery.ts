@@ -9,7 +9,6 @@ export const downloadVideoQueryCommand = async (query: TelegramBot.InlineQuery) 
         try {
             const data = await getVideo(match, false);
             if (data !== null && data?.images.length === 0 && data.id){
-                console.log(data, 'data');
                 bot.answerInlineQuery(
                     query.id, 
                     [

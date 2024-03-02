@@ -16,8 +16,6 @@ const getRedirectUrl = async (url: any) => {
 const getIdVideo = (url: string) => {
     const matching = url.includes("/video/")
     if(!matching){
-        console.log(("[X] Error: URL not found"), JSON.stringify(url));
-        // exit();
         return;
     }
     // Tiktok ID is usually 19 characters long and sits after /video/
@@ -31,7 +29,6 @@ export const getVideo = async (url: string, watermark: boolean) => {
     
     const idVideo = getIdVideo(parsedUrl)
     const API_URL = `https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?aweme_id=${idVideo}`;
-    console.log(API_URL);
     
     try {
         const request = await fetch(API_URL, {
@@ -83,20 +80,12 @@ export const getVideo = async (url: string, watermark: boolean) => {
             })
         }
     }else {
-        // check if video is slideshow
         if (!!res.aweme_list[0].image_post_info) {
-            console.log(("[*] Video is slideshow"));
-
-            // get all image urls
             res.aweme_list[0].image_post_info.images.forEach((element: any) => {
-                // url_list[0] contains a webp
-                // url_list[1] contains a jpeg
                 imagesResult.push(element.display_image.url_list[1]);
             });
             musicUrlResult = res?.aweme_list?.[0]?.music?.play_url?.uri || ''
-
         } else {
-            // download_addr vs play_addr
             urlResult = (watermark) ? res.aweme_list[0].video.download_addr.url_list[0] : res.aweme_list[0].video.play_addr.url_list[0];
             coverResult = res?.aweme_list?.[0]?.video?.cover?.url_list[0]
             data_size = res?.aweme_list?.[0].video.download_addr.data_size
@@ -110,7 +99,6 @@ export const getVideo = async (url: string, watermark: boolean) => {
         cover: coverResult,
         data_size,
     }
-    console.log(data, 'jp');
     
     return data;
 }
