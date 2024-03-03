@@ -38,19 +38,17 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
                                     media: item,
                                     type: "photo",
                                     caption: 
-                                        `
-                                        ${
-                                            (
-                                                (i === 0)
+                                        ((i === 0)
+                                            ? 
+                                            `${
+                                                (msg.from?.username)
                                                 ? 
-                                                    (msg.from?.username)
-                                                    ? 
-                                                        `@${msg.from?.username}` + captionText(index, sliceIndex)
-                                                    : 
-                                                        msg.from?.first_name + captionText(index, sliceIndex)
-                                                : undefined)
-                                        } ${sourceTitle}
-                                        `
+                                                    `@${msg.from?.username}` + captionText(index, sliceIndex)
+                                                : 
+                                                    msg.from?.first_name + captionText(index, sliceIndex)
+                                            } ${sourceTitle}`
+                                        : undefined)
+                                        
                                     
                                 })));
                         }
