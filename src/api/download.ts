@@ -49,6 +49,28 @@ export const getVideo = async (url: string, watermark: boolean) => {
     let musicUrlResult = '';
     let coverResult = '';
     let data_size = 0;
+    if (!res){
+        return ({
+            url: '',
+            images: [],
+            id: idVideo,
+            musicUrl: '',
+            data_size,
+            error: true,
+            errorMsg: 'Response is undefined'
+        })
+    }
+    if (!res.hasOwnProperty('aweme_list')){
+        return ({
+            url: '',
+            images: [],
+            id: idVideo,
+            musicUrl: '',
+            data_size,
+            error: true,
+            errorMsg: 'aweme_list Not found!'
+        })
+    }
     if (res.aweme_list[0].aweme_id != idVideo) {
         const body = new FormData();
         body.set("url", url);
@@ -80,6 +102,8 @@ export const getVideo = async (url: string, watermark: boolean) => {
                 id: idVideo,
                 musicUrl: '',
                 data_size,
+                error: true,
+                errorMsg: 'Tikwm API got error!'
             })
         }
     }else {
@@ -94,7 +118,7 @@ export const getVideo = async (url: string, watermark: boolean) => {
             data_size = res?.aweme_list?.[0].video.download_addr.data_size
         }
     }
-    var data: {url: string, images: string[], id?: string, musicUrl: string, cover?: string, data_size: number} = {
+    var data: {url: string, images: string[], id?: string, musicUrl: string, cover?: string, data_size: number, error?: boolean, errorMsg?: string} = {
         url: urlResult,
         images: imagesResult,
         id: idVideo,

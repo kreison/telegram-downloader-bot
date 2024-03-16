@@ -2,8 +2,10 @@ import axios from "axios";
 
 export const getWorkURLAPI = async () => {
     const BACKUP_URLS = [
+        'https://api16-normal-c-useast2a.tiktokv.com/aweme/v1/feed/',
         'https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/',
-        'https://api16-normal-c-useast2a.tiktokv.com/aweme/v1/feed/'
+        'https://api21-core-c-useast2a.tiktokv.com/aweme/v1/feed/',
+        'https://api19-core-c-useast2a.tiktokv.com/aweme/v1/feed/',
     ];
 
     let baseUrl = '';

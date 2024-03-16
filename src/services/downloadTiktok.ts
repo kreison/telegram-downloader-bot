@@ -15,6 +15,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
     checkingMsg = await bot.sendMessage(chatId, `Проверяю...`);
     let index = 0;
     let retryLimit = 0;
+    let sliceIndexAlbum = 0;
     while ((index < (matchArray?.length || 0)) || (retryLimit >= 10)) {
         try {
             const match = matchArray?.[index]
@@ -22,7 +23,9 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
             const sourceTitle = msg.text?.match(regex)?.[1] ? `"${msg.text?.match(regex)?.[1]}"` : ''
             if (match) {
                 const data = await getVideo(match, false);
-                if (data === null) return;
+                if (data === null || data.error){
+                    bot.sendMessage(chatId, `Произошла ошибка\nКод ошибки: ${data.errorMsg} \nСсылка на видео: ${match}`)
+                };
                 if ((data?.images?.length ?? 0) > 0) {
                     let imgsMsg: {msg: any} = {msg}
                     if (data?.images){
@@ -30,8 +33,8 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
                         const captionText = (index: number, i: number) => (
                             (` ${index+1} из ${matchArray.length}.\n${sliceArrays.length > 0 ? `Альбом ${i+1} из ${slicedArray.length}` : ''}` )
                         )
-                        for (let sliceIndex = 0; sliceIndex < slicedArray.length; sliceIndex++) {
-                            const subArray = slicedArray[sliceIndex];
+                        while (sliceIndexAlbum < slicedArray.length) {
+                            const subArray = slicedArray[sliceIndexAlbum];
                             imgsMsg.msg = await bot.sendMediaGroup(
                                 chatId,
                                 subArray.map((item: string, i: number) => ({
@@ -43,14 +46,15 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
                                             `${
                                                 (msg.from?.username)
                                                 ? 
-                                                    `@${msg.from?.username}` + captionText(index, sliceIndex)
+                                                    `@${msg.from?.username}` + captionText(index, sliceIndexAlbum)
                                                 : 
-                                                    msg.from?.first_name + captionText(index, sliceIndex)
+                                                    msg.from?.first_name + captionText(index, sliceIndexAlbum)
                                             } ${sourceTitle}`
                                         : undefined)
                                         
                                     
-                                })));
+                            })));
+                            sliceIndexAlbum++
                         }
                     }
                     if (data?.musicUrl){
@@ -95,6 +99,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
                 bot.editMessageText('Проверка не прошла...', {chat_id: chatId, message_id: checkingMsg?.message_id})
             }
             index++
+            sliceIndexAlbum = 0;
         } catch (error: any) {     
             retryLimit++
             console.log(error.message, 'error');
@@ -114,5 +119,5 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
         }
     }
     bot.deleteMessage(chatId, checkingMsg?.message_id || 0);
-    await bot.sendMessage(chatId, `Скачано успешно!`);
+    await bot.sendMessage(chatId, `Загрузка завершена`);
 }
