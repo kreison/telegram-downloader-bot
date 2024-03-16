@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { BASE_URL } from "..";
 
 const headers = new Headers();
 headers.append('User-Agent', 'TikTok 26.2.0 rv:262018 (iPhone; iOS 14.4.2; en_US) Cronet');
@@ -23,12 +24,14 @@ const getIdVideo = (url: string) => {
     return (idVideo.length > 19) ? idVideo.substring(0, idVideo.indexOf("?")) : idVideo;
 }
 
+
 export const getVideo = async (url: string, watermark: boolean) => {
     
     const parsedUrl = await getRedirectUrl(url)
     
-    const idVideo = getIdVideo(parsedUrl)
-    const API_URL = `https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?aweme_id=${idVideo}`;
+    const idVideo = getIdVideo(parsedUrl);
+    
+    const API_URL = `${BASE_URL.current}?aweme_id=${idVideo}`;
     
     try {
         const request = await fetch(API_URL, {
