@@ -5,6 +5,7 @@ import { sliceArrays } from "../utils/sliceArray";
 import { regexLinkTiktok } from "../routes/routes";
 import ffmpeg from 'fluent-ffmpeg';
 import { ffmpegToBuffer } from "../utils/ffmpegToBuffer";
+import { escapeRegExp } from "../utils/escapeRegex";
 
 
 export async function downloadTiktokCommand (msg: TelegramBot.Message) {
@@ -19,7 +20,7 @@ export async function downloadTiktokCommand (msg: TelegramBot.Message) {
     while ((index < (matchArray?.length || 0)) || (retryLimit >= 10)) {
         try {
             const match = matchArray?.[index]
-            const regex = new RegExp(`${match} \n?(.*)`, 'i');
+            const regex = new RegExp(`${escapeRegExp(match || '')} \n?(.*)`, 'i');
             const sourceTitle = msg.text?.match(regex)?.[1] ? `"${msg.text?.match(regex)?.[1]}"` : ''
             if (match) {
                 const data = await getVideo(match, false);
