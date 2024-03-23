@@ -8,12 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 import bot from './bot';
 import express from 'express'
-import { getWorkURLAPI } from './api/getWorkURLAPI';
 
-export const BASE_URL = {current: 'https://api16-normal-c-useast2a.tiktokv.com/aweme/v1/feed/'};
-(async () => {
-    BASE_URL.current = await getWorkURLAPI();
-})()
 const PORT = process.env.PORT!;
 console.log(PORT, process.version);
 
